@@ -622,6 +622,16 @@ class RubyLexer
     result EXPR_END, :tSTRING, text[1..-2].gsub(/\\\\/, "\\").gsub(/\\'/, "'")
   end
 
+  def process_literal text
+    string_content = text[1..-2]
+
+    if string_content.valid_encoding?
+      string_content.force_encoding(Encoding::BINARY)
+    end
+
+    result EXPR_END, :tSTRING, string_content.gsub(ESC) { unescape $1 }
+  end
+
   def process_lchevron text
     if (lex_state !~ EXPR_DOT|EXPR_CLASS &&
         !is_end? &&

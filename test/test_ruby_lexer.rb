@@ -1,4 +1,4 @@
-# encoding: US-ASCII
+# encoding: utf-8
 
 # TODO: work this out
 
@@ -316,6 +316,11 @@ class TestRubyLexer < Minitest::Test
     assert_lex3("\"Nl%\\000\\000A\\000\\999\"", # you should be ashamed
                 nil,
                 :tSTRING, %W[ Nl% \u0000 \u0000 A \u0000 999 ].join, EXPR_END)
+  end
+
+  def test_mixed_binary_encoding
+    s = "\xBA\xBBƮ\xC1\xF7\xB1\xB8"
+    assert_lex3(s.dup, nil, :tIVAR, s.dup, EXPR_END)
   end
 
   def test_yylex_ambiguous_uminus
